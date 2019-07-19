@@ -9,6 +9,7 @@ docker create --name=aria2 \
 -v <path to config>:/config \
 -e PGID=<gid> -e PUID=<uid> \
 -e TZ=<timezone> \
+-e SECRET=<default : admin> \
 -p 6800:6800 -p 80:80 \
 auska/docker-aria2
 ```

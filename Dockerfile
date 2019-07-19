@@ -6,7 +6,7 @@ ARG VERSION
 LABEL build_version="blog.auska.win version:- ${VERSION} Build-date:- ${BUILD_DATE}"
 LABEL maintainer="Auska"
 
-ENV TZ=Asia/Shanghai ARIA2_VERSION=1.34.0 ARIANG_VERSION=1.1.0 SECRET=admin
+ENV TZ=Asia/Shanghai ARIA2_VERSION=1.34.0 ARIANG_VERSION=1.1.0 SECRET=admin UPDATE=Yes
 
 RUN \
 	echo "**** install packages ****" \

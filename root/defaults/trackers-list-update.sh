@@ -1,5 +1,5 @@
 #!/bin/bash
-if [ "$UPDATE" == "YES" ];then
+if [ "$UPDATE" == "No" ];then
 	list=`wget -qO- https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all.txt|awk NF|sed ":a;N;s/\n/,/g;ta"`
 	echo $list > /tmp/list.txt
 	if [ -e "/tmp/list.txt" ];then
