@@ -44,5 +44,5 @@ RUN \
 	&& sed -i 's/defaultValue:"20M"/defaultValue:"4k"/g' /webui/js/aria-ng* 
 
 # ports and volumes
-EXPOSE 6800 80
+EXPOSE 6800 8080
 VOLUME /mnt /config
