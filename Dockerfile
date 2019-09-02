@@ -34,7 +34,7 @@ COPY --from=compilingaria2c  /aria2  /
 RUN \
 	echo "**** install packages ****" \
 #	&& sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories \
-	&& apk add --no-cache darkhttpd unzip \
+	&& apk add --no-cache darkhttpd unzip curl \
 	&& cd /tmp \
 	&& curl -fSL https://github.com/mayswind/AriaNg/releases/download/${ARIANG_VERSION}/AriaNg-${ARIANG_VERSION}.zip -o ariang.zip \
 	&& mkdir -p /webui \
