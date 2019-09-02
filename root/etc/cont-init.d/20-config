@@ -1,15 +1,30 @@
 #!/usr/bin/with-contenv bash
 
 mkdir -p /webui /mnt
-chmod +x /defaults/trackers-list-update.sh
 
 # copy
+
+chmod a+x /defaults/updatetrackers.sh
 
 [[ ! -f /config/aria2.conf ]] && cp /defaults/aria2.conf /config/aria2.conf
 
 [[ ! -f /config/aria2.session ]] && touch /config/aria2.session
 
-/defaults/trackers-list-update.sh 2>&1
+secret=`echo -n  $SECRET|base64`
+sed -i 's/secret:""/secret:"'"$secret"'"/g' /usr/local/aria2/AriaNg/js/aria-ng*
+
+#设定trackers更新任务
+if [ `grep  -c updatetrackers.sh /var/spool/cron/crontabs/root` -eq 0 ];then
+echo "0       0       *       *       *       /defaults/updatetrackers.sh" >> /var/spool/cron/crontabs/root
+echo trackers更新任务已设定。
+else
+echo trackers更新任务已存在。
+fi
+
+#启动更新trackers。
+if [ "$TRACKERSAUTO" == "YES" ];then
+/defaults/updatetrackers.sh
+fi
 
 # permissions
 chown abc:abc -R \
