@@ -25,7 +25,7 @@ FROM lsiobase/alpine:3.10
 # set version label
 LABEL maintainer="Auska"
 
-ENV TZ=Asia/Shanghai ARIA2_VERSION=1.34.0 ARIANG_VERSION=1.1.3 SECRET=admin TRACKERSAUTO=Yes
+ENV TZ=Asia/Shanghai ARIA2_VERSION=1.35.0 ARIANG_VERSION=1.1.4 SECRET=admin TRACKERSAUTO=Yes
 
 # copy local files
 COPY  root /
