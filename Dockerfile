@@ -1,4 +1,4 @@
-FROM alpine:3.10 as compilingaria2c
+FROM alpine:3.11 as compilingaria2c
 
 #compiling aria2c
 
@@ -20,7 +20,7 @@ RUN  apk add --no-cache ca-certificates make g++ gcc zlib-dev openssl-dev expat-
 
 # docker aria2 
 
-FROM lsiobase/alpine:3.10
+FROM lsiobase/alpine:3.11
 
 # set version label
 LABEL maintainer="Auska"
