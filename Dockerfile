@@ -19,7 +19,7 @@ FROM lsiobase/alpine:3.11
 # set version label
 LABEL maintainer="Auska"
 
-ENV TZ=Asia/Shanghai ARIANG_VERSION=1.1.6 SECRET=admin RPC=6800 PORT=16881 WEB=8080 TRACKERSAUTO=Yes
+ENV TZ=Asia/Shanghai ARIANG_VERSION=1.1.6 SECRET=admin RPC=6800 PORT=16881 WEB=8080 TRACKERSAUTO=Yes MODE=BT
 
 # copy local files
 COPY  root /

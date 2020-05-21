@@ -2,30 +2,38 @@
 
 if [ "$TRACKERSAUTO" == "YES" ];then
 
-wget -qP  /tmp  https://trackerslist.com/best.txt --no-check-certificate 
-Newtrackers="bt-tracker=`awk NF /tmp/trackers_all.txt|sed ":a;N;s/\n/,/g;ta"`"
-Oldtrackers="`grep bt-tracker=  /config/aria2.conf`" 
+# get url_list
+tracker_url='https://trackerslist.com/best.txt'
+aria2_url=http://localhost:6800/jsonrpc
 
-if [ -e "/tmp/trackers_all.txt" ] ;  then
+list=$(curl -s $tracker_url)
+url_list=$(echo $list | sed 's/[ ][ ]*/,/g')
 
-if [ $Newtrackers == $Oldtrackers ];then
-echo trackers文件一样,不需要更新。
+# pack json
+#uuid=$(cat /proc/sys/kernel/random/uuid)
+uuid=$(od -x /dev/urandom | head -1 | awk '{OFS="-"; print $2$3,$4,$5,$6,$7$8$9}')
+token=$SECRET
+json='{
+    "jsonrpc": "2.0",
+    "method": "aria2.changeGlobalOption",
+    "id": "'$uuid'",
+    "params": [
+        "token:'$token'",
+        {
+            "bt-tracker": "'$url_list'"
+        }
+    ]
+}'
+
+# post json
+curl -H "Accept: application/json" \
+    -H "Content-type: application/json" \
+    -X POST \
+    -d "$json" \
+    -s "$aria2_url"
+
 else
-sed -i 's@'"$Oldtrackers"'@'"$Newtrackers"'@g'   /config/aria2.conf 
-#kill aria2
-ps -ef |grep aria2.conf |grep -v grep|awk '{print $1}'|xargs kill -9
-echo 已更新trackers。
-fi
 
-rm  /tmp/trackers_all.txt
-
-else
-echo 更新文件未正确下载，更新未成功，请检查网络。
-
-fi
-
-else
-
-echo 未设定自动更新trackers。
+echo "Update Tracker Exit ..."
 
 fi

@@ -1,33 +1,53 @@
 #!/usr/bin/with-contenv bash
 
 mkdir -p /webui /mnt
+chmod +x /defaults/trackers-list-update.sh
 
-# copy
-
-chmod a+x /defaults/updatetrackers.sh
+# copy
 
 [[ ! -f /config/aria2.conf ]] && cp /defaults/aria2.conf /config/aria2.conf
 
 [[ ! -f /config/aria2.session ]] && touch /config/aria2.session
 
-secret=`echo -n  $SECRET|base64`
-sed -i 's/secret:""/secret:"'"$secret"'"/g' /usr/local/aria2/AriaNg/js/aria-ng*
+[[ ! -f /config/dht.dat ]] && touch /config/dht.dat
 
-#设定trackers更新任务
-if [ `grep  -c updatetrackers.sh /var/spool/cron/crontabs/root` -eq 0 ];then
-echo "0       0       *       *       *       /defaults/updatetrackers.sh" >> /var/spool/cron/crontabs/root
-echo trackers更新任务已设定。
+[[ ! -f /config/dht6.dat ]] && touch /config/dht6.dat
+
+chown abc:abc /config/aria2.conf /config/aria2.session /config/dht.dat /config/dht6.dat
+
+# fix mode
+if [ $MODE == "PT" ]; then
+    sed -i "s@max-overall-upload-limit=.*@max-overall-upload-limit=0@g" /config/aria2.conf
+    sed -i "s@enable-dht=.*@enable-dht=false@g" /config/aria2.conf
+    sed -i "s@enable-dht6=.*@enable-dht6=false@g" /config/aria2.conf
+    sed -i "s@bt-enable-lpd=.*@bt-enable-lpd=false@g" /config/aria2.conf
+    sed -i "s@enable-peer-exchange=.*@enable-peer-exchange=false@g" /config/aria2.conf
+    sed -i "s@seed-ratio=.*@seed-ratio=0@g" /config/aria2.conf
+    sed -i "s@force-save=.*@force-save=true@g" /config/aria2.conf
+    sed -i "s@bt-detach-seed-only=.*@bt-detach-seed-only=true@g" /config/aria2.conf
 else
-echo trackers更新任务已存在。
+    sed -i "s@max-overall-upload-limit=.*@max-overall-upload-limit=1K@g" /config/aria2.conf
+    sed -i "s@enable-dht=.*@enable-dht=true@g" /config/aria2.conf
+    sed -i "s@enable-dht6=.*@enable-dht6=true@g" /config/aria2.conf
+    sed -i "s@bt-enable-lpd=.*@bt-enable-lpd=true@g" /config/aria2.conf
+    sed -i "s@enable-peer-exchange=.*@enable-peer-exchange=true@g" /config/aria2.conf
+    sed -i "s@seed-ratio=.*@seed-ratio=1@g" /config/aria2.conf
+    sed -i "s@force-save=.*@force-save=false@g" /config/aria2.conf
+    sed -i "s@bt-detach-seed-only=.*@bt-detach-seed-only=false@g" /config/aria2.conf
 fi
 
-#启动更新trackers。
-if [ "$TRACKERSAUTO" == "YES" ];then
-/defaults/updatetrackers.sh
+# add tracker
+tmp=`curl -s https://trackerslist.com/best.txt`
+list=`echo $tmp | sed 's/[ ][ ]*/,/g'`
+if [ -z "`grep "bt-tracker" /config/aria2.conf`" ]; then
+    sed -i '$a bt-tracker='${list} /config/aria2.conf
+    echo add tracker ...
+else
+    sed -i "s@bt-tracker.*@bt-tracker=$list@g" /config/aria2.conf
+    echo update tracker ...
 fi
 
-# permissions
+# permissions
 chown abc:abc -R \
-	/webui \
 	/mnt \
 	/config
