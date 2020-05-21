@@ -1,20 +1,4 @@
-FROM alpine:3.11 as compilingaria2c
-
-#compiling aria2c
-
-ARG  ARIA2_VER=1.35.0
-
-# copy local files
-COPY  root /
-
-RUN  apk add --no-cache bash bash-completion build-base pkgconf autoconf automake libtool perl linux-headers \
-&&  bash /defaults/build.sh \
-&&  mkdir /aria2 \
-&&  cp --parents /usr/local/bin/aria2c /aria2
-
-# docker aria2 
-
-FROM lsiobase/alpine:3.11
+FROM auska/docker-aria2:no-web
 
 # set version label
 LABEL maintainer="Auska"
@@ -23,7 +7,6 @@ ENV TZ=Asia/Shanghai ARIANG_VERSION=1.1.6 SECRET=admin RPC=6800 PORT=16881 WEB=8
 
 # copy local files
 COPY  root /
-COPY --from=compilingaria2c  /aria2  /
 
 RUN \
 	echo "**** install packages ****" \
